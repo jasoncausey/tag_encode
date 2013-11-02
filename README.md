@@ -12,4 +12,4 @@ In addition to the user-friendly alphabet, the algorithm is designed so that seq
 Encoding, not Hashing
 ---------------------
 
-This is an -encoding- scheme, not a -hashing- scheme.  The process produces a 1:1 conversion from integer values to "tags", and vice-versa.  Because the tags are produced using an alphabet larger than the base-10 digits, tags will always consist of the same or fewer characters than their corresponding integers.  For example, the value `2147483646` encodes to `ba9n82dq`.  
+This is an *encoding* scheme, not a *hashing* scheme.  The process produces a 1:1 conversion from integer values to "tags", and vice-versa.  Because the tags are produced using an alphabet larger than the base-10 digits, tags will always consist of the same or fewer characters than their corresponding integers.  For example, the value `2147483646` encodes to `ba9n82dq`.  
