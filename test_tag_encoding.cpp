@@ -71,8 +71,8 @@ int main(int argc, const char* argv[]){
 
 	std::cout << "\n";
 	std::cout << "Testing conversion of case and mis-used '0' and '1' digits: " << std::endl;
-	std::cout << "Converting 20A: " << tag_decode("20a") << "\t" << tag_decode("2oa") << std::endl;
-	std::cout << "Converting 21A: " << tag_decode("21a") << "\t" << tag_decode("2la") << std::endl;
+	std::cout << "Converting 30A: " << tag_decode("30a") << "\t" << tag_decode("3oa") << std::endl;
+	std::cout << "Converting 31A: " << tag_decode("31a") << "\t" << tag_decode("3la") << std::endl;
 
 	return 0;
 }

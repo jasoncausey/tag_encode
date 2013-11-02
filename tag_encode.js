@@ -1,5 +1,5 @@
 /**
- * @file tag_encode.h
+ * @file tag_encode.js
  *
  * Defines the functions `tag_encode()` and `tag_decode()`, which are designed
  * to convert from integers (such as those used as database serial numbers)
@@ -40,18 +40,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef TAG_ENCODE_H
-#define TAG_ENCODE_H
 
-#include<string>
-#include<sstream>
-#include<algorithm>
-#include<exception>
-#include<cctype>
-
-const int N_ALPHACASE = 26;
-const int N_ALPHANUM  = 34;
-const int N_DIGITS    = 8;
+N_ALPHACASE = 26;
+N_ALPHANUM  = 34;
+N_DIGITS    = 8;
 
 /**
  * @brief  encode a non-negative integer into alphanumeric "tag" string
@@ -72,27 +64,32 @@ const int N_DIGITS    = 8;
  * @param  serial non-negative integer serial number to convert to alphanumeric "tag"
  * @return        alphanumeric "tag" string that is both web- and human-friendly
  */
-std::string tag_encode(int serial){
+function tag_encode(serial){
     if(serial < 0){
-        throw std::out_of_range("Serial number must be non-negative.");
+        throw "Serial number must be non-negative.";
     }
-    std::ostringstream tag;
-    int    position = 1;
-    int    digit, digit_base;
-    char   digit_in_ascii;
+    var    tag      = "";
+    var    position = 1;
+    var    digit
+    var    digit_base;
+    var    digit_in_ascii;
+    var    two_code  = "2".charCodeAt(0);
+    var    nine_code = "9".charCodeAt(0);
+    var    a_code    = "a".charCodeAt(0);
+
     do{
         digit_base = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
         digit      = serial % digit_base;
-        serial    /= digit_base;
-        digit_in_ascii = (digit_base != N_ALPHACASE) ? '2' + digit : 'a' + digit;   // Base digit is '2' because both '0' and '1' are 
-        if(digit_base != N_ALPHACASE && digit_in_ascii > '9'){                      // ambiguous in comparison to 'O' and 'l'.
-            digit_in_ascii = 'a' + (digit - N_DIGITS);
+        serial     = Math.floor(serial / digit_base);
+        digit_in_ascii = (digit_base != N_ALPHACASE) ? two_code + digit : a_code + digit;   // Base digit is '2' because both '0' and '1' are 
+        if(digit_base != N_ALPHACASE && digit_in_ascii > nine_code){                        // ambiguous in comparison to 'O' and 'l'.
+            digit_in_ascii = a_code + (digit - N_DIGITS);
         }
-        tag << digit_in_ascii;
+        tag += String.fromCharCode(digit_in_ascii);
     }while(serial > 0);
-    std::string tag_str = tag.str();                                                // order is big-endian now...
-    std::reverse(tag_str.begin(), tag_str.end());                                   // so convert to little-endian
-    return tag_str;
+                                                                                            // Must reverse since the generated string is big-endian and
+    tag = tag.split("").reverse().join("");                                                 // we want little-endian.  naive reverse is ok since we are 
+    return tag                                                                              // really just ASCII    
 }
 
 /**
@@ -113,48 +110,49 @@ std::string tag_encode(int serial){
  *          consecutive numbers, avoiding "big number" appearance.
  *          These tags are shorter than the serial numbers produced:
  *          (MAX_INT of 2147483646 encodes as ba9n82dq -- only 8 characters!)
- *
- * @throw  std::invalid_argument    thrown if the tag is blank or if re-encoding the
- *                                  tag does not produce the same tag
+ *          
+ * @throw  "Tag cannot be blank."   thrown if the tag is blank 
+ * @throw  "Invalid input tag."     thrown if re-encoding the tag does not 
+ *                                  produce the same tag
  * 
- * @param  tag "tag" string as produced by the `tag_encode` function
- * @return     non-negative integer serial number corresponding to the input tag
+ * @param  tag_str  "tag" string as produced by the `tag_encode` function
+ * @return          non-negative integer serial number corresponding to the input tag
  */
-int tag_decode(std::string tag){
-    if(tag.size() < 1){
-        throw std::invalid_argument("Tag cannot be blank.");
+function tag_decode(tag_str){
+    if(tag_str.length < 1){
+        throw "Tag cannot be blank.";
     }
-    int    digit, digit_base;
-    char   digit_in_ascii;
-    int    serial   = 0;
-    int    position = 1;
-    int    tag_size = tag.size();
-    int    mult     = 1;
+    var    digit;
+    var    digit_base;
+    var    digit_in_ascii;
+    var    serial   = 0;
+    var    position = 1;
+    var    tag_size = tag_str.length;
+    var    mult     = 1;
+    var    two_code  = "2".charCodeAt(0);
+    var    nine_code = "9".charCodeAt(0);
+    var    a_code    = "a".charCodeAt(0);
                                                                                     // "user-proof" pre-process:
-    for(size_t pos = tag.find("0"); pos != std::string::npos; pos = tag.find("0", pos+1)){
-        tag.replace(pos, 1, "O");                                                   // replace all 0's with o's
-    }
-    for(size_t pos = tag.find("1"); pos != std::string::npos; pos = tag.find("1", pos+1)){
-        tag.replace(pos, 1, "l");                                                   // and all 1's with l's 
-    }
+    tag_str = tag_str.replace(/0/g, "O");                                           // replace all 0's with o's
+    tag_str = tag_str.replace(/1/g, "l");                                           // and all 1's with l's 
+    tag_str = tag_str.toLowerCase();                                                // and lowercase the string
 
     do{
-        digit_in_ascii = tag[tag_size - position] = tolower(tag[tag_size - position]);
+        digit_in_ascii = tag_str.charCodeAt(tag_size - position);
         digit_base     = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
-        if(digit_base == N_ALPHACASE || digit_in_ascii > '9'){
-            digit = digit_in_ascii - 'a' + ( (digit_base != N_ALPHACASE) ? N_DIGITS : 0 );
+        if(digit_base == N_ALPHACASE || digit_in_ascii > nine_code){
+            digit = digit_in_ascii - a_code + ( (digit_base != N_ALPHACASE) ? N_DIGITS : 0 );
         }
         else{
-            digit = digit_in_ascii - '2';
+            digit = digit_in_ascii - two_code;
         }
         serial += digit * mult;
         mult   *= digit_base;
     }while(position <= tag_size);
                                                                                     // if the string is re-encoded
-    if(tag_encode(serial) != tag){                                                  // but doesn't match the original,
-        throw std::invalid_argument("Invalid input tag.");                          // that is a problem...
-    }
+    if(tag_encode(serial) != tag_str){                                              // but doesn't match the original,
+        throw "Invalid input tag.";                                                 // that is a problem...
+    }                                                                                
+                                                                                    
     return serial;
 }
-
-#endif
