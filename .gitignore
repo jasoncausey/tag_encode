@@ -3,5 +3,6 @@
 
 *.plist
 
+.DS_Store
 
 *.doxygen

@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">tag_encode
-   &#160;<span id="projectnumber">1.02</span>
+   &#160;<span id="projectnumber">1.03</span>
    </div>
    <div id="projectbrief">Integer to alphanumeric tag encoder/decoder functions.</div>
   </td>
@@ -98,12 +98,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afef35c18c4e4f0e028c257a5ca6ec933"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tag__encode_8h.html#afef35c18c4e4f0e028c257a5ca6ec933">tag_encode</a> (int serial)</td></tr>
-<tr class="memdesc:afef35c18c4e4f0e028c257a5ca6ec933"><td class="mdescLeft">&#160;</td><td class="mdescRight">encode a non-negative integer into alphanumeric "tag" string  <a href="#afef35c18c4e4f0e028c257a5ca6ec933">More...</a><br/></td></tr>
-<tr class="separator:afef35c18c4e4f0e028c257a5ca6ec933"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71f381251511def07c697df2d6569799"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tag__encode_8h.html#a71f381251511def07c697df2d6569799">tag_decode</a> (std::string tag)</td></tr>
-<tr class="memdesc:a71f381251511def07c697df2d6569799"><td class="mdescLeft">&#160;</td><td class="mdescRight">decode an alphanumeric "tag" string into its corresponding integer  <a href="#a71f381251511def07c697df2d6569799">More...</a><br/></td></tr>
-<tr class="separator:a71f381251511def07c697df2d6569799"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ae81ab3411bd6bd12d19e33edfa7d3a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tag__encode_8h.html#a8ae81ab3411bd6bd12d19e33edfa7d3a">tag_encode</a> (long int serial)</td></tr>
+<tr class="memdesc:a8ae81ab3411bd6bd12d19e33edfa7d3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">encode a non-negative integer into alphanumeric "tag" string  <a href="#a8ae81ab3411bd6bd12d19e33edfa7d3a">More...</a><br/></td></tr>
+<tr class="separator:a8ae81ab3411bd6bd12d19e33edfa7d3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa63ebcfe3b45c642e67e62010372c9a4"><td class="memItemLeft" align="right" valign="top">long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tag__encode_8h.html#aa63ebcfe3b45c642e67e62010372c9a4">tag_decode</a> (std::string tag)</td></tr>
+<tr class="memdesc:aa63ebcfe3b45c642e67e62010372c9a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">decode an alphanumeric "tag" string into its corresponding integer  <a href="#aa63ebcfe3b45c642e67e62010372c9a4">More...</a><br/></td></tr>
+<tr class="separator:aa63ebcfe3b45c642e67e62010372c9a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -116,21 +116,24 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_ALPHANUM</b> =
 <tr class="memitem:a33286dc5fc0fb1ba6fae1e1d296c1f58"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33286dc5fc0fb1ba6fae1e1d296c1f58"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8</td></tr>
 <tr class="separator:a33286dc5fc0fb1ba6fae1e1d296c1f58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a1783c2aa1b22381abdad4600f41a64"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a1783c2aa1b22381abdad4600f41a64"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>BASE_SELECT</b> [] = {N_ALPHANUM, N_ALPHACASE, N_DIGITS}</td></tr>
+<tr class="separator:a1a1783c2aa1b22381abdad4600f41a64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Defines the functions <code><a class="el" href="tag__encode_8h.html#afef35c18c4e4f0e028c257a5ca6ec933" title="encode a non-negative integer into alphanumeric &quot;tag&quot; string ">tag_encode()</a></code> and <code><a class="el" href="tag__encode_8h.html#a71f381251511def07c697df2d6569799" title="decode an alphanumeric &quot;tag&quot; string into its corresponding integer ">tag_decode()</a></code>, which are designed to convert from integers (such as those used as database serial numbers) to human- and web-friendly alphanumeric strings. The encoding produces short strings (shorter than the string versions of the base-10 integers) that are easy to email, write down, place in a URL, or any other common operation on the web.</p>
-<p>For robustness against humans, the tags are not case-sensitive, although they will always be generated with lowercase characters. The numeric digits '1' and '0' are also unused in the encoding because of the ambiguity with 'l' and 'O' &ndash; although <code><a class="el" href="tag__encode_8h.html#a71f381251511def07c697df2d6569799" title="decode an alphanumeric &quot;tag&quot; string into its corresponding integer ">tag_decode()</a></code> will convert these digits into the corresponding alphabetical characters on-the-fly. Additionally, the tag encoder will never produce more than two consecutive alphabetical characters, thus avoiding any problems with certain "words" being generated. Strings of more than two consecutive digits are also avoided, avoiding "big number" tags.</p>
+<div class="textblock"><p>Defines the functions <code><a class="el" href="tag__encode_8h.html#a8ae81ab3411bd6bd12d19e33edfa7d3a" title="encode a non-negative integer into alphanumeric &quot;tag&quot; string ">tag_encode()</a></code> and <code><a class="el" href="tag__encode_8h.html#aa63ebcfe3b45c642e67e62010372c9a4" title="decode an alphanumeric &quot;tag&quot; string into its corresponding integer ">tag_decode()</a></code>, which are designed to convert from integers (such as those used as database serial numbers) to human- and web-friendly alphanumeric strings. The encoding produces short strings (shorter than the string versions of the base-10 integers) that are easy to email, write down, place in a URL, or any other common operation on the web.</p>
+<p>For robustness against humans, the tags are not case-sensitive, although they will always be generated with lowercase characters. The numeric digits '1' and '0' are also unused in the encoding because of the ambiguity with 'l' and 'O' &ndash; although <code><a class="el" href="tag__encode_8h.html#aa63ebcfe3b45c642e67e62010372c9a4" title="decode an alphanumeric &quot;tag&quot; string into its corresponding integer ">tag_decode()</a></code> will convert these digits into the corresponding alphabetical characters on-the-fly. Additionally, the tag encoder will never produce more than two consecutive alphabetical characters, thus avoiding any problems with certain "words" being generated. Strings of more than two consecutive digits are also avoided, avoiding "big number" tags.</p>
 <dl class="section copyright"><dt>Copyright</dt><dd>(c) 2013 Jason L Causey, Distributed under the MIT License (MIT):</dd></dl>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a71f381251511def07c697df2d6569799"></a>
+<a class="anchor" id="aa63ebcfe3b45c642e67e62010372c9a4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int tag_decode </td>
+          <td class="memname">long int tag_decode </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>tag</em>)</td><td></td>
@@ -141,7 +144,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
 
 <p>decode an alphanumeric "tag" string into its corresponding integer </p>
 <p>Decode a "tag" produced by the <code>tag_encode</code> function into its corresponding non-negative integer. For robustness, this function will accept upper- and lower-case versions of the tag string, and converts often-mistaken characters '0' and '1' into 'O' and 'l' on-the-fly.</p>
-<dl class="section remark"><dt>Remarks</dt><dd>The tag encoding is web-safe, using only the characters a-z2-9. The digits '0' and '1' are NOT used, since they are easily visually confused with the characters 'O' and 'l'. Tags are not case- sensitive, but are always generated with lowercase characters. Additionally, this scheme always guarentees that there is are never more than two consecutive alphabetical characters, thereby avoiding the need to blacklist any "impolite" words. Also, there are never more than two consecutive numbers, avoiding "big number" appearance. These tags are shorter than the serial numbers produced: (MAX_INT of 2147483646 encodes as ba9n82dq &ndash; only 8 characters!)</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>The tag encoding is web-safe, using only the characters a-z2-9. The digits '0' and '1' are NOT used, since they are easily visually confused with the characters 'O' and 'l'. Tags are not case- sensitive, but are always generated with lowercase characters. Additionally, this scheme always guarentees that there is are never more than two consecutive alphabetical characters, thereby avoiding the need to blacklist any "impolite" words. Also, there are never more than two consecutive numbers, avoiding "big number" appearance. These tags are shorter than the serial numbers produced: (MAX_INT of 2147483646 encodes as ba9n82dq &ndash; 8 characters!) (Max long of 9223372036854775806 encodes as 6eh5g28yq5mi7bq &ndash; 15 characters!)</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::invalid_argument</td><td>thrown if the tag is blank or if re-encoding the tag does not produce the same tag</td></tr>
@@ -158,14 +161,14 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
 
 </div>
 </div>
-<a class="anchor" id="afef35c18c4e4f0e028c257a5ca6ec933"></a>
+<a class="anchor" id="a8ae81ab3411bd6bd12d19e33edfa7d3a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">std::string tag_encode </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">long int&#160;</td>
           <td class="paramname"><em>serial</em>)</td><td></td>
           <td></td>
         </tr>
@@ -173,8 +176,8 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
 </div><div class="memdoc">
 
 <p>encode a non-negative integer into alphanumeric "tag" string </p>
-<p>Encode a non-negative integer serial number into a "shortened URL"-like hash token. The encoding is web-safe, using only the characters a-z2-9. The digits '0' and '1' are NOT used, since they are easily visually confused with the characters 'O' and 'l'. Tags are not case- sensitive, but are always generated with lowercase characters. Additionally, this scheme always guarentees that there is are never more than two consecutive alphabetical characters, thereby avoiding the need to blacklist any "impolite" words. Also, there are never more than two consecutive numbers, avoiding "big number" appearance.</p>
-<dl class="section remark"><dt>Remarks</dt><dd>These tags are shorter than the input numbers (MAX_INT of 2147483646 encodes as ba9n82dq &ndash; only 8 characters!)</dd></dl>
+<p>Encode a non-negative integer serial number into a "shortened URL"-like hash token. The encoding is web-safe, using only the characters a-z2-9. The digits '0' and '1' are NOT used, since they are easily visually confused with the characters 'O' and 'l'. Tags are not case- sensitive, but are always generated with lowercase characters. Additionally, this scheme always guarentees that there is are never more than two consecutive alphabetical characters, thereby avoiding the need to blacklist any "impolite" words. Also, there are never more than two consecutive numbers, avoiding "big number" appearance. Limits: Minimum serial number: 0 Maximum is the system-dependant upper limit for type 'long int'</p>
+<dl class="section remark"><dt>Remarks</dt><dd>These tags are shorter than the input numbers (MAX_INT of 2147483646 encodes as ba9n82dq &ndash; 8 characters!) (Max long of 9223372036854775806 encodes as 6eh5g28yq5mi7bq &ndash; 15 characters!)</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">serial</td><td>non-negative integer serial number to convert to alphanumeric "tag" </td></tr>
@@ -188,7 +191,7 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Nov 2 2013 00:11:44 for tag_encode by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Nov 2 2013 13:45:32 for tag_encode by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

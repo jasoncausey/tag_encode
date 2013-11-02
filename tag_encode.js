@@ -44,6 +44,7 @@
 N_ALPHACASE = 26;
 N_ALPHANUM  = 34;
 N_DIGITS    = 8;
+BASE_SELECT = [N_ALPHANUM, N_ALPHACASE, N_DIGITS];
 
 /**
  * @brief  encode a non-negative integer into alphanumeric "tag" string
@@ -57,9 +58,10 @@ N_DIGITS    = 8;
  * than two consecutive alphabetical characters, thereby avoiding the need
  * to blacklist any "impolite" words.  Also, there are never more than two
  * consecutive numbers, avoiding "big number" appearance.
+ * Limits:  Smallest encodable integer: 0   Largest: 9007199254740992
  *
  * @remark  These tags are shorter than the input numbers 
- *          (MAX_INT of 2147483646  encodes as ba9n82dq -- only 8 characters!)
+ *          (Javascript max 9007199254740992 encodes as 56v23bt4a52ay -- 13 characters!)
  * 
  * @param  serial non-negative integer serial number to convert to alphanumeric "tag"
  * @return        alphanumeric "tag" string that is both web- and human-friendly
@@ -69,7 +71,7 @@ function tag_encode(serial){
         throw "Serial number must be non-negative.";
     }
     var    tag      = "";
-    var    position = 1;
+    var    position = 0;
     var    digit
     var    digit_base;
     var    digit_in_ascii;
@@ -78,7 +80,7 @@ function tag_encode(serial){
     var    a_code    = "a".charCodeAt(0);
 
     do{
-        digit_base = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
+        digit_base = BASE_SELECT[position++ % 3];
         digit      = serial % digit_base;
         serial     = Math.floor(serial / digit_base);
         digit_in_ascii = (digit_base != N_ALPHACASE) ? two_code + digit : a_code + digit;   // Base digit is '2' because both '0' and '1' are 
@@ -109,7 +111,7 @@ function tag_encode(serial){
  *          to blacklist any "impolite" words.  Also, there are never more than two
  *          consecutive numbers, avoiding "big number" appearance.
  *          These tags are shorter than the serial numbers produced:
- *          (MAX_INT of 2147483646 encodes as ba9n82dq -- only 8 characters!)
+ *          (Javascript max 9007199254740992 encodes as 56v23bt4a52ay -- 13 characters!)
  *          
  * @throw  "Tag cannot be blank."   thrown if the tag is blank 
  * @throw  "Invalid input tag."     thrown if re-encoding the tag does not 
@@ -125,10 +127,11 @@ function tag_decode(tag_str){
     var    digit;
     var    digit_base;
     var    digit_in_ascii;
-    var    serial   = 0;
-    var    position = 1;
-    var    tag_size = tag_str.length;
-    var    mult     = 1;
+    var    serial    = 0;
+    var    position  = 0;
+    var    tag_size  = tag_str.length;
+    var    mult      = 1;
+    var    check     = true;
     var    two_code  = "2".charCodeAt(0);
     var    nine_code = "9".charCodeAt(0);
     var    a_code    = "a".charCodeAt(0);
@@ -138,8 +141,8 @@ function tag_decode(tag_str){
     tag_str = tag_str.toLowerCase();                                                // and lowercase the string
 
     do{
+        digit_base     = BASE_SELECT[position++ % 3];
         digit_in_ascii = tag_str.charCodeAt(tag_size - position);
-        digit_base     = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
         if(digit_base == N_ALPHACASE || digit_in_ascii > nine_code){
             digit = digit_in_ascii - a_code + ( (digit_base != N_ALPHACASE) ? N_DIGITS : 0 );
         }
@@ -148,11 +151,14 @@ function tag_decode(tag_str){
         }
         serial += digit * mult;
         mult   *= digit_base;
-    }while(position <= tag_size);
-                                                                                    // if the string is re-encoded
-    if(tag_encode(serial) != tag_str){                                              // but doesn't match the original,
-        throw "Invalid input tag.";                                                 // that is a problem...
-    }                                                                                
-                                                                                    
+    }while(position < tag_size);
+    
+    try{                                                                            // if the string is re-encoded
+        if(tag_encode(serial) != tag_str){                                          // but doesn't match the original,
+            check = false;                                                          // that is a problem...
+        }
+    }catch(err){ check = false; }                                                   // a negative value? : that is bad too   
+    if(!check) { throw "Invalid input tag: \"" + tag_str + "\""; }                  // Any kind of mismatch creates an exception                                            
+                                
     return serial;
 }

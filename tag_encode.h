@@ -49,9 +49,10 @@
 #include<exception>
 #include<cctype>
 
-const int N_ALPHACASE = 26;
-const int N_ALPHANUM  = 34;
-const int N_DIGITS    = 8;
+const int N_ALPHACASE   = 26;
+const int N_ALPHANUM    = 34;
+const int N_DIGITS      = 8;
+const int BASE_SELECT[] = {N_ALPHANUM, N_ALPHACASE, N_DIGITS};
 
 /**
  * @brief  encode a non-negative integer into alphanumeric "tag" string
@@ -65,23 +66,26 @@ const int N_DIGITS    = 8;
  * than two consecutive alphabetical characters, thereby avoiding the need
  * to blacklist any "impolite" words.  Also, there are never more than two
  * consecutive numbers, avoiding "big number" appearance.
+ * Limits:  Minimum serial number: 0
+ *          Maximum is the system-dependant upper limit for type 'long int'
  *
  * @remark  These tags are shorter than the input numbers 
- *          (MAX_INT of 2147483646  encodes as ba9n82dq -- only 8 characters!)
+ *          (MAX_INT  of          2147483646 encodes as ba9n82dq        -- 8 characters!)
+ *          (Max long of 9223372036854775806 encodes as 6eh5g28yq5mi7bq -- 15 characters!)
  * 
  * @param  serial non-negative integer serial number to convert to alphanumeric "tag"
  * @return        alphanumeric "tag" string that is both web- and human-friendly
  */
-std::string tag_encode(int serial){
+std::string tag_encode(long int serial){
     if(serial < 0){
         throw std::out_of_range("Serial number must be non-negative.");
     }
     std::ostringstream tag;
-    int    position = 1;
-    int    digit, digit_base;
     char   digit_in_ascii;
+    int    digit, digit_base;
+    int    position = 0;
     do{
-        digit_base = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
+        digit_base = BASE_SELECT[position++ % 3];
         digit      = serial % digit_base;
         serial    /= digit_base;
         digit_in_ascii = (digit_base != N_ALPHACASE) ? '2' + digit : 'a' + digit;   // Base digit is '2' because both '0' and '1' are 
@@ -112,7 +116,8 @@ std::string tag_encode(int serial){
  *          to blacklist any "impolite" words.  Also, there are never more than two
  *          consecutive numbers, avoiding "big number" appearance.
  *          These tags are shorter than the serial numbers produced:
- *          (MAX_INT of 2147483646 encodes as ba9n82dq -- only 8 characters!)
+ *          (MAX_INT  of          2147483646 encodes as ba9n82dq        -- 8 characters!)
+ *          (Max long of 9223372036854775806 encodes as 6eh5g28yq5mi7bq -- 15 characters!)
  *
  * @throw  std::invalid_argument    thrown if the tag is blank or if re-encoding the
  *                                  tag does not produce the same tag
@@ -120,16 +125,17 @@ std::string tag_encode(int serial){
  * @param  tag "tag" string as produced by the `tag_encode` function
  * @return     non-negative integer serial number corresponding to the input tag
  */
-int tag_decode(std::string tag){
+long int tag_decode(std::string tag){
     if(tag.size() < 1){
         throw std::invalid_argument("Tag cannot be blank.");
     }
-    int    digit, digit_base;
-    char   digit_in_ascii;
-    int    serial   = 0;
-    int    position = 1;
-    int    tag_size = tag.size();
-    int    mult     = 1;
+    int      digit, digit_base;
+    char     digit_in_ascii;
+    long int serial   = 0;
+    int      position = 0;
+    int      tag_size = tag.size();
+    long int mult     = 1;
+    bool     check    = true;
                                                                                     // "user-proof" pre-process:
     for(size_t pos = tag.find("0"); pos != std::string::npos; pos = tag.find("0", pos+1)){
         tag.replace(pos, 1, "O");                                                   // replace all 0's with o's
@@ -139,8 +145,8 @@ int tag_decode(std::string tag){
     }
 
     do{
+        digit_base     = BASE_SELECT[position++ % 3];
         digit_in_ascii = tag[tag_size - position] = tolower(tag[tag_size - position]);
-        digit_base     = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
         if(digit_base == N_ALPHACASE || digit_in_ascii > '9'){
             digit = digit_in_ascii - 'a' + ( (digit_base != N_ALPHACASE) ? N_DIGITS : 0 );
         }
@@ -149,12 +155,20 @@ int tag_decode(std::string tag){
         }
         serial += digit * mult;
         mult   *= digit_base;
-    }while(position <= tag_size);
-                                                                                    // if the string is re-encoded
-    if(tag_encode(serial) != tag){                                                  // but doesn't match the original,
-        throw std::invalid_argument("Invalid input tag.");                          // that is a problem...
+    }while(position < tag_size);
+
+    try{                                                                            // if the string is re-encoded
+        if(tag_encode(serial) != tag){                                              // but doesn't match the original,
+            check = false;                                                          // that is a problem...
+        }
+    }catch(std::out_of_range) { check = false; }                                    // if we generate a negative somehow, that's bad too
+    if(!check){                                                                     // Any kind of mismatch creates an exception
+        throw std::invalid_argument(
+            std::string("Invalid input tag: \"") + tag + "\""
+        );      
     }
-    return serial;
+                                                                                    
+    return serial;                                                                  // return only if all is well
 }
 
 #endif
