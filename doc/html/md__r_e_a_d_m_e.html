@@ -23,9 +23,9 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">tag_encode
-   &#160;<span id="projectnumber">1.01</span>
+   &#160;<span id="projectnumber">1.02</span>
    </div>
-   <div id="projectbrief">integer to alphanumeric web friendly tag encoder/decoder</div>
+   <div id="projectbrief">Integer to alphanumeric tag encoder/decoder functions.</div>
   </td>
  </tr>
  </tbody>
@@ -84,11 +84,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>The alphabet used for the encoding is the set of lowercase characters [a...z] and the digits [2...9]. The <code>0</code> and <code>1</code> are avoided on purpose due to the visual similarity with <code>O</code> and <code>l</code>. Additionally, the decoding algorithm is case-insensitive, so if the user types the tag in by hand and uses uppercase letters, everything still works.</p>
 <p>In addition to the user-friendly alphabet, the algorithm is designed so that sequences of more than two letters or more than two digits are strictly avoided. This keeps the visual separation by alternation high, and avoid things like undesirable "words" from being generated.</p>
 <h2>Encoding, not Hashing </h2>
-<p>This is an <em>encoding</em> scheme, not a <em>hashing</em> scheme. The process produces a 1:1 conversion from integer values to "tags", and vice-versa. Because the tags are produced using an alphabet larger than the base-10 digits, tags will always consist of the same or fewer characters than their corresponding integers. For example, the value <code>2147483646</code> encodes to <code>ba9n82dq</code>. </p>
+<p>This is an <em>encoding</em> scheme, not a <em>hashing</em> scheme. The process produces a 1:1 conversion from integer values to "tags", and vice-versa. Because the tags are produced using an alphabet larger than the base-10 digits, tags will always consist of the same or fewer characters than their corresponding integers. For example, the value <code>2147483646</code> encodes to <code>ba9n82dq</code>.</p>
+<h2>Function Reference </h2>
+<p>```cpp int tag_decode ( std::string tag ) ``` decode an alphanumeric "tag" string into its corresponding integer</p>
+<p>Decode a "tag" produced by the <code><a class="el" href="tag__encode_8h.html#afef35c18c4e4f0e028c257a5ca6ec933" title="encode a non-negative integer into alphanumeric &quot;tag&quot; string ">tag_encode()</a></code> function into its corresponding non-negative integer. For robustness, this function will accept upper- and lower-case versions of the tag string, and converts often-mistaken characters <code>'0'</code> and <code>'1'</code> into <code>'O'</code> and <code>'l'</code> on-the-fly.</p>
+<p><b>Parameters</b></p>
+<p><code>tag</code> "tag" string as produced by the <code><a class="el" href="tag__encode_8h.html#afef35c18c4e4f0e028c257a5ca6ec933" title="encode a non-negative integer into alphanumeric &quot;tag&quot; string ">tag_encode()</a></code> function</p>
+<p><b>Returns</b></p>
+<p>non-negative integer serial number corresponding to the input tag</p>
+<p>```cpp std::string tag_encode ( int serial ) ``` encode a non-negative integer into alphanumeric "tag" string</p>
+<p>Encode a non-negative integer serial number into a "shortened URL"-like hash token. The encoding is web-safe, using only the characters a-z2-9. The digits <code>'0'</code> and <code>'1'</code> are NOT used, since they are easily visually confused with the characters <code>'O'</code> and <code>'l'</code>. Tags are not case- sensitive, but are always generated with lowercase characters. Additionally, this scheme always guarentees that there is are never more than two consecutive alphabetical characters, thereby avoiding the need to blacklist any "impolite" words. Also, there are never more than two consecutive numbers, avoiding "big number" appearance.</p>
+<p><b>Parameters</b></p>
+<p><code>serial</code> non-negative integer serial number to convert to alphanumeric "tag"</p>
+<p><b>Returns</b></p>
+<p>alphanumeric "tag" string that is both web- and human-friendly </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 1 2013 22:03:25 for tag_encode by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Nov 2 2013 00:11:44 for tag_encode by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

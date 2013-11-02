@@ -23,9 +23,9 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">tag_encode
-   &#160;<span id="projectnumber">1.01</span>
+   &#160;<span id="projectnumber">1.02</span>
    </div>
-   <div id="projectbrief">integer to alphanumeric web friendly tag encoder/decoder</div>
+   <div id="projectbrief">Integer to alphanumeric tag encoder/decoder functions.</div>
   </td>
  </tr>
  </tbody>
@@ -124,8 +124,6 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. </p>
-
-<p>Definition in file <a class="el" href="tag__encode_8h_source.html">tag_encode.h</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a71f381251511def07c697df2d6569799"></a>
 <div class="memitem">
@@ -144,6 +142,12 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
 <p>decode an alphanumeric "tag" string into its corresponding integer </p>
 <p>Decode a "tag" produced by the <code>tag_encode</code> function into its corresponding non-negative integer. For robustness, this function will accept upper- and lower-case versions of the tag string, and converts often-mistaken characters '0' and '1' into 'O' and 'l' on-the-fly.</p>
 <dl class="section remark"><dt>Remarks</dt><dd>The tag encoding is web-safe, using only the characters a-z2-9. The digits '0' and '1' are NOT used, since they are easily visually confused with the characters 'O' and 'l'. Tags are not case- sensitive, but are always generated with lowercase characters. Additionally, this scheme always guarentees that there is are never more than two consecutive alphabetical characters, thereby avoiding the need to blacklist any "impolite" words. Also, there are never more than two consecutive numbers, avoiding "big number" appearance. These tags are shorter than the serial numbers produced: (MAX_INT of 2147483646 encodes as ba9n82dq &ndash; only 8 characters!)</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::invalid_argument</td><td>thrown if the tag is blank or if re-encoding the tag does not produce the same tag</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tag</td><td>"tag" string as produced by the <code>tag_encode</code> function </td></tr>
@@ -151,8 +155,6 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>non-negative integer serial number corresponding to the input tag </dd></dl>
-
-<p>Definition at line <a class="el" href="tag__encode_8h_source.html#l00120">120</a> of file <a class="el" href="tag__encode_8h_source.html">tag_encode.h</a>.</p>
 
 </div>
 </div>
@@ -181,14 +183,12 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>N_DIGITS</b> = 8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>alphanumeric "tag" string that is both web- and human-friendly </dd></dl>
 
-<p>Definition at line <a class="el" href="tag__encode_8h_source.html#l00075">75</a> of file <a class="el" href="tag__encode_8h_source.html">tag_encode.h</a>.</p>
-
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Nov 1 2013 22:03:25 for tag_encode by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Nov 2 2013 00:11:44 for tag_encode by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>
