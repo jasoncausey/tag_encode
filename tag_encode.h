@@ -15,7 +15,8 @@
  * digits into the corresponding alphabetical characters on-the-fly.
  * Additionally, the tag encoder will never produce more than two consecutive
  * alphabetical characters, thus avoiding any problems with certain "words"
- * being generated.  Strings of all digits are possible, however.
+ * being generated.  Strings of more than two consecutive digits are also
+ * avoided, avoiding "big number" tags.
  * 
  *
  * @copyright (c) 2013 Jason L Causey,
@@ -62,10 +63,11 @@ const int N_DIGITS    = 8;
  * sensitive, but are always generated with lowercase characters.
  * Additionally, this scheme always guarentees that there is are never more
  * than two consecutive alphabetical characters, thereby avoiding the need
- * to blacklist any "impolite" words.
+ * to blacklist any "impolite" words.  Also, there are never more than two
+ * consecutive numbers, avoiding "big number" appearance.
  *
  * @remark  These tags are shorter than the input numbers 
- *          (MAX_INT of 2147483646  encodes as r2vq6tq -- only 7 characters!)
+ *          (MAX_INT of 2147483646  encodes as ba9n82dq -- only 8 characters!)
  * 
  * @param  serial non-negative integer serial number to convert to alphanumeric "tag"
  * @return        alphanumeric "tag" string that is both web- and human-friendly
@@ -79,17 +81,17 @@ std::string tag_encode(int serial){
     int    digit, digit_base;
     char   digit_in_ascii;
     do{
-        digit_base = (position++ % 3) ? N_ALPHANUM : N_DIGITS;
+        digit_base = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
         digit      = serial % digit_base;
         serial    /= digit_base;
-        digit_in_ascii = '2' + digit;                                   // Base digit is '2' because both '0' and '1' are 
-        if(digit_in_ascii > '9'){                                       // ambiguous in comparison to 'O' and 'l'.
+        digit_in_ascii = (digit_base != N_ALPHACASE) ? '2' + digit : 'a' + digit;   // Base digit is '2' because both '0' and '1' are 
+        if(digit_base != N_ALPHACASE && digit_in_ascii > '9'){                      // ambiguous in comparison to 'O' and 'l'.
             digit_in_ascii = 'a' + (digit - N_DIGITS);
         }
         tag << digit_in_ascii;
     }while(serial > 0);
-    std::string tag_str = tag.str();                                    // order is big-endian now...
-    std::reverse(tag_str.begin(), tag_str.end());                       // so convert to little-endian
+    std::string tag_str = tag.str();                                                // order is big-endian now...
+    std::reverse(tag_str.begin(), tag_str.end());                                   // so convert to little-endian
     return tag_str;
 }
 
@@ -107,9 +109,10 @@ std::string tag_encode(int serial){
  *          sensitive, but are always generated with lowercase characters.
  *          Additionally, this scheme always guarentees that there is are never more
  *          than two consecutive alphabetical characters, thereby avoiding the need
- *          to blacklist any "impolite" words.
+ *          to blacklist any "impolite" words.  Also, there are never more than two
+ *          consecutive numbers, avoiding "big number" appearance.
  *          These tags are shorter than the serial numbers produced:
- *          (MAX_INT of 2147483646  encodes as r2vq6tq -- only 7 characters!)
+ *          (MAX_INT of 2147483646 encodes as ba9n82dq -- only 8 characters!)
  * 
  * @param  tag "tag" string as produced by the `tag_encode` function
  * @return     non-negative integer serial number corresponding to the input tag
@@ -124,19 +127,19 @@ int tag_decode(std::string tag){
     int    position = 1;
     int    tag_size = tag.size();
     int    mult     = 1;
-                                                                        // "user-proof" pre-process:
+                                                                                    // "user-proof" pre-process:
     for(size_t pos = tag.find("0"); pos != std::string::npos; pos = tag.find("0", pos+1)){
-        tag.replace(pos, 1, "O");                                       // replace all 0's with o's
+        tag.replace(pos, 1, "O");                                                   // replace all 0's with o's
     }
     for(size_t pos = tag.find("1"); pos != std::string::npos; pos = tag.find("1", pos+1)){
-        tag.replace(pos, 1, "l");                                       // and all 1's with l's 
+        tag.replace(pos, 1, "l");                                                   // and all 1's with l's 
     }
 
     do{
         digit_in_ascii = tolower(tag[tag_size - position]);
-        digit_base     = (position++ % 3) ? N_ALPHANUM : N_DIGITS;
-        if(digit_in_ascii > '9'){
-            digit = digit_in_ascii - 'a' + N_DIGITS;
+        digit_base     = (position++ % 3) ? ((position % 3 == 0) ? N_ALPHACASE : N_ALPHANUM) : N_DIGITS;
+        if(digit_base == N_ALPHACASE || digit_in_ascii > '9'){
+            digit = digit_in_ascii - 'a' + ( (digit_base != N_ALPHACASE) ? N_DIGITS : 0 );
         }
         else{
             digit = digit_in_ascii - '2';
